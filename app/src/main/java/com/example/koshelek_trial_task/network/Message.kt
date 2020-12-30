@@ -1,4 +1,4 @@
-package com.example.koshelek_trial_task
+package com.example.koshelek_trial_task.network
 
 import com.google.gson.annotations.SerializedName
 

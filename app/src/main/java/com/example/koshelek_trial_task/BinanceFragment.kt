@@ -1,71 +1,66 @@
 package com.example.koshelek_trial_task
 
-import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.koshelek_trial_task.data_classes.Entities
+import com.example.koshelek_trial_task.data_classes.SingleEntity
 import com.example.koshelek_trial_task.databinding.FragmentBinanceBinding
+import com.example.koshelek_trial_task.network.BinanceWebSocket
+import com.example.koshelek_trial_task.network.Message
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import com.neovisionaries.ws.client.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class BinanceFragment : Fragment() {
 
-    companion object{
-        const val baseEndpoint = "wss://stream.binance.com:9443"
-        const val connectionTimeout = 5000
-    }
-
-    lateinit var socket: WebSocket
-    lateinit var factory: WebSocketFactory
+    lateinit var binding: FragmentBinanceBinding
+    lateinit var viewModel: DataViewModel
+    lateinit var binanceWebSocket: BinanceWebSocket
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        val binding = FragmentBinanceBinding.inflate(inflater)
+        binding = FragmentBinanceBinding.inflate(inflater)
 
-        factory = WebSocketFactory().setConnectionTimeout(connectionTimeout)
-        socket = WebSocketFactory().createSocket("${baseEndpoint}/ws/btcusdt@depth")
+        binding.lifecycleOwner = this
 
-        socket.addListener(object: WebSocketAdapter() {
-            override fun onConnected(
-                websocket: WebSocket?,
-                headers: MutableMap<String, MutableList<String>>?
-            ) {
-                super.onConnected(websocket, headers)
-                Log.d("WebSocket", "Connected")
+        viewModel = ViewModelProvider(this).get(DataViewModel::class.java)
+
+        binding.table.adapter = viewModel.adapter.value
+
+        binding.table.layoutManager = LinearLayoutManager(context)
+        binding.table.setHasFixedSize(true)
+        binding.table.itemAnimator = DefaultItemAnimator()
+
+
+        binding.bottomNav.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.bids -> {viewModel.setType("bids")
+                    Log.d("WebSocket", "Bids selected")
+                }
+                R.id.asks -> {viewModel.setType("asks")
+                    Log.d("WebSocket", "Asks selected")
+                }
             }
+            return@setOnNavigationItemSelectedListener true
+        }
 
-            override fun onConnectError(websocket: WebSocket?, exception: WebSocketException?) {
-                super.onConnectError(websocket, exception)
-                Log.d("WebSocket", "On connect error $exception")
-            }
-
-            override fun onTextMessage(websocket: WebSocket?, text: String?) {
-                super.onTextMessage(websocket, text)
-                val message = messageToGson(text)
-                Log.d("WebSocket", "Bids ${message.bids}")
-                Log.d("WebSocket", "Asks ${message.asks}")
-            }
-
-            override fun onError(websocket: WebSocket?, cause: WebSocketException?) {
-                super.onError(websocket, cause)
-                Log.d("WebSocket", "Error ${cause.toString()}")
-            }
-        })
-
-        socket.connectAsynchronously()
+        binanceWebSocket = BinanceWebSocket(this, viewModel)
 
         return binding.root
     }
-
-    fun messageToGson(message: String?): Message {
-        return Gson().fromJson("""$message""", Message::class.java)
-    }
-
 }

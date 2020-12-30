@@ -2,4 +2,7 @@
     <string name="app_name">koshelek-trial-task</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bids">Bids</string>
+    <string name="asks">Asks</string>
+    <string name="details">Details</string>
 </resources>
