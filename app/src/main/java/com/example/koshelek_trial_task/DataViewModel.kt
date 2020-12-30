@@ -1,5 +1,6 @@
 package com.example.koshelek_trial_task
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,8 +17,9 @@ class DataViewModel: ViewModel() {
     get() = _adapter
 
     private val _symbol = MutableLiveData<String>()
+    private val _full_symbol = MutableLiveData<String>()
     val symbol: LiveData<String>
-    get() = _symbol
+    get() = _full_symbol
 
     private val _type = MutableLiveData<String>()
     val type: LiveData<String>
@@ -25,7 +27,8 @@ class DataViewModel: ViewModel() {
 
     init {
         _adapter.value = Adapter()
-        _symbol.value = "/ws/btcusdt@depth"
+        _symbol.value = "btcusdt"
+        _full_symbol.value = "/ws/${_symbol.value}@depth"
         _type.value = "bids"
     }
 
@@ -36,6 +39,7 @@ class DataViewModel: ViewModel() {
 
     fun setSymbol(newSymbol: String) {
         _symbol.value = newSymbol
+        _full_symbol.value = "/ws/${_symbol.value}@depth"
     }
 
     fun setType(newType: String) {

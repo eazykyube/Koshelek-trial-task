@@ -5,4 +5,9 @@
     <string name="bids">Bids</string>
     <string name="asks">Asks</string>
     <string name="details">Details</string>
+    <string-array name="currencies">
+        <item>BTCUSDT</item>
+        <item>BNBBTC</item>
+        <item>ETHBTC</item>
+    </string-array>
 </resources>
