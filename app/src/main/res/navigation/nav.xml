@@ -5,6 +5,6 @@
 
     <fragment
         android:id="@+id/binanceFragment"
-        android:name="com.example.koshelek_trial_task.BinanceFragment"
+        android:name="com.example.koshelek_trial_task.view.BinanceFragment"
         android:label="BinanceFragment" />
 </navigation>

@@ -1,10 +1,11 @@
-package com.example.koshelek_trial_task
+package com.example.koshelek_trial_task.view
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.koshelek_trial_task.R
 import com.example.koshelek_trial_task.data_classes.SingleEntity
 import kotlinx.android.synthetic.main.table_row.view.*
 
@@ -19,7 +20,9 @@ class Adapter(): RecyclerView.Adapter<Adapter.BinanceViewHolder>() {
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinanceViewHolder {
-        return BinanceViewHolder.from(parent)
+        return BinanceViewHolder.from(
+            parent
+        )
     }
 
     override fun onBindViewHolder(holder: BinanceViewHolder, position: Int) {
@@ -46,7 +49,9 @@ class Adapter(): RecyclerView.Adapter<Adapter.BinanceViewHolder>() {
             fun from(parent: ViewGroup): BinanceViewHolder {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.table_row, parent, false)
-                return BinanceViewHolder(view)
+                return BinanceViewHolder(
+                    view
+                )
             }
         }
     }
