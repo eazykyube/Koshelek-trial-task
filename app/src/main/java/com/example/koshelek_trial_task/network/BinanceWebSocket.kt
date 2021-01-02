@@ -18,8 +18,7 @@ import kotlinx.coroutines.launch
 const val baseEndpoint = "wss://stream.binance.com:9443"
 const val connectionTimeout = 5000
 
-class BinanceWebSocket(val fragment: BinanceFragment, val
-viewModel: DataViewModel) {
+class BinanceWebSocket(val fragment: BinanceFragment, val viewModel: DataViewModel) {
 
     lateinit var socket: WebSocket
     var factory: WebSocketFactory = WebSocketFactory().setConnectionTimeout(connectionTimeout)
@@ -53,11 +52,17 @@ viewModel: DataViewModel) {
 
                 fragment.lifecycleScope.launch(Dispatchers.Main) {
                     when (viewModel.type.value) {
-                        "bids" -> viewModel.adapter.value!!.data = bidsAndAsks.first.values
-                        "asks" -> viewModel.adapter.value!!.data = bidsAndAsks.second.values
+                        "bids" -> {
+                            viewModel.adapter.value!!.data = bidsAndAsks.first.values
+                            makeInvisible(fragment.binding.loading)
+                            makeVisible(fragment.binding.table)
+                        }
+                        "asks" -> {
+                            viewModel.adapter.value!!.data = bidsAndAsks.second.values
+                            makeInvisible(fragment.binding.loading)
+                            makeVisible(fragment.binding.table)
+                        }
                     }
-                    makeInvisible(fragment.binding.loading)
-                    makeVisible(fragment.binding.table)
                 }
             }
 
@@ -105,27 +110,15 @@ viewModel: DataViewModel) {
     }
 
     fun messageToEntities(message: Message): Pair<Entities, Entities> {
-        var bids = Entities(
-            "bids",
-            mutableListOf()
-        )
-        var asks = Entities(
-            "asks",
-            mutableListOf()
-        )
+        var bids = Entities("bids", mutableListOf())
+        var asks = Entities("asks", mutableListOf())
         for (elem in message.bids) {
-            var singleEntity =
-                SingleEntity(
-                    mutableListOf()
-                )
+            var singleEntity = SingleEntity(mutableListOf())
             singleEntity.values = elem
             bids.values.add(singleEntity)
         }
         for (elem in message.asks) {
-            var singleEntity =
-                SingleEntity(
-                    mutableListOf()
-                )
+            var singleEntity = SingleEntity(mutableListOf())
             singleEntity.values = elem
             asks.values.add(singleEntity)
         }

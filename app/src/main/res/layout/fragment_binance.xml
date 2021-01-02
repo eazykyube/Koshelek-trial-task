@@ -10,7 +10,6 @@
             type="com.example.koshelek_trial_task.view.DataViewModel" />
     </data>
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,8 +22,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:entries="@array/currencies"
-            android:textSize="16dp"
-            android:layout_marginTop="8dp"
+            android:textSize="@dimen/text_size"
+            android:layout_marginTop="@dimen/default_padding"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -35,9 +34,9 @@
             android:id="@+id/headers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginTop="@dimen/default_padding"
+            android:layout_marginLeft="@dimen/default_padding"
+            android:layout_marginRight="@dimen/default_padding"
             app:layout_constraintTop_toBottomOf="@+id/spinner"
             app:layout_constraintBottom_toTopOf="@+id/table"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -48,10 +47,10 @@
                 android:id="@+id/constAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Amount"
+                android:text="@string/amount"
+                android:textStyle="bold"
                 android:textAlignment="center"
-                android:textSize="16dp"
+                android:textSize="@dimen/text_size"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,10 +58,10 @@
                 android:id="@+id/constPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Price"
+                android:text="@string/price"
+                android:textStyle="bold"
                 android:textAlignment="center"
-                android:textSize="16dp"
+                android:textSize="@dimen/text_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -71,10 +70,10 @@
                 android:id="@+id/constTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total"
+                android:text="@string/total"
+                android:textStyle="bold"
                 android:textAlignment="center"
-                android:textSize="16dp"
+                android:textSize="@dimen/text_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -95,15 +94,21 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginTop="@dimen/default_padding"
+            android:layout_marginLeft="@dimen/default_padding"
+            android:layout_marginRight="@dimen/default_padding"
             android:clipToPadding="false"
             app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/headers"
             app:spanCount="1" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav"
