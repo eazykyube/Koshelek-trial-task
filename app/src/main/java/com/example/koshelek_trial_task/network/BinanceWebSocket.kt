@@ -1,5 +1,8 @@
 package com.example.koshelek_trial_task.network
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -9,6 +12,7 @@ import com.example.koshelek_trial_task.view.BinanceFragment
 import com.example.koshelek_trial_task.view.DataViewModel
 import com.example.koshelek_trial_task.data_classes.Entities
 import com.example.koshelek_trial_task.data_classes.SingleEntity
+import com.example.koshelek_trial_task.view.Adapter
 import com.google.gson.Gson
 import com.neovisionaries.ws.client.*
 import kotlinx.coroutines.Dispatchers
@@ -21,11 +25,13 @@ const val connectionTimeout = 5000
 class BinanceWebSocket(val fragment: BinanceFragment, val viewModel: DataViewModel) {
 
     lateinit var socket: WebSocket
+    lateinit var cm: ConnectivityManager
     var factory: WebSocketFactory = WebSocketFactory().setConnectionTimeout(connectionTimeout)
 
     fun connectSocket() {
 
         socket = factory.createSocket("${baseEndpoint}${viewModel.symbol.value}")
+        cm = fragment.context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
         socket.addListener(object : WebSocketAdapter() {
             override fun onConnected(
@@ -39,8 +45,13 @@ class BinanceWebSocket(val fragment: BinanceFragment, val viewModel: DataViewMod
             override fun onConnectError(websocket: WebSocket?, exception: WebSocketException?) {
                 super.onConnectError(websocket, exception)
                 Log.d("WebSocket", "On connect error $exception")
-                Toast.makeText(fragment.context, "WebSocket Connect Error: $${exception.toString()}",
-                    Toast.LENGTH_SHORT).show()
+                fragment.lifecycleScope.launch(Dispatchers.Main) {
+                    Toast.makeText(
+                        fragment.context, "WebSocket connection error. Please, check your " +
+                                "network connection and reconnect to the WebSocket by selecting type above",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
 
             override fun onTextMessage(websocket: WebSocket?, text: String?) {
@@ -49,15 +60,16 @@ class BinanceWebSocket(val fragment: BinanceFragment, val viewModel: DataViewMod
 
                 val message = messageToGson(text)
                 val bidsAndAsks = messageToEntities(message)
-
                 fragment.lifecycleScope.launch(Dispatchers.Main) {
                     when (viewModel.type.value) {
                         "bids" -> {
+                            viewModel.adapter.value!!.isBids = true
                             viewModel.adapter.value!!.data = bidsAndAsks.first.values
                             makeInvisible(fragment.binding.loading)
                             makeVisible(fragment.binding.table)
                         }
                         "asks" -> {
+                            viewModel.adapter.value!!.isBids = false
                             viewModel.adapter.value!!.data = bidsAndAsks.second.values
                             makeInvisible(fragment.binding.loading)
                             makeVisible(fragment.binding.table)
@@ -69,8 +81,6 @@ class BinanceWebSocket(val fragment: BinanceFragment, val viewModel: DataViewMod
             override fun onError(websocket: WebSocket?, cause: WebSocketException?) {
                 super.onError(websocket, cause)
                 Log.d("WebSocket", "Error ${cause.toString()}")
-                Toast.makeText(fragment.context, "WebSocket Error: $${cause.toString()}",
-                    Toast.LENGTH_SHORT).show()
             }
 
             override fun onDisconnected(
@@ -89,8 +99,15 @@ class BinanceWebSocket(val fragment: BinanceFragment, val viewModel: DataViewMod
                 fragment.lifecycleScope.launch(Dispatchers.Main) {
                     makeInvisible(fragment.binding.table)
                     makeVisible(fragment.binding.loading)
+                    val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+                    if (!activeNetwork?.isConnectedOrConnecting!!) {
+                        Toast.makeText(
+                            fragment.context, "WebSocket connection error. Please, check your " +
+                                    "network connection and reconnect to the WebSocket by selecting type above",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-                connectSocket()
             }
         })
         socket.connectAsynchronously()
@@ -98,6 +115,7 @@ class BinanceWebSocket(val fragment: BinanceFragment, val viewModel: DataViewMod
 
     fun updateConnect() {
         socket.disconnect(WebSocketCloseCode.NORMAL, null)
+        connectSocket()
     }
 
     fun showLoading() {

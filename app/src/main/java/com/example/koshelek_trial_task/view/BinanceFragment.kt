@@ -34,7 +34,6 @@ class BinanceFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(DataViewModel::class.java)
 
-        binding.dataViewModel = viewModel
         binding.table.adapter = viewModel.adapter.value
 
         binding.table.layoutManager = LinearLayoutManager(context)
@@ -63,9 +62,9 @@ class BinanceFragment : Fragment() {
 
         var spinnerAdapter =
             context?.let { ArrayAdapter.createFromResource(
-                it, R.array.currencies, android.R.layout.simple_spinner_item
+                it, R.array.currencies, R.layout.spinner_item
             ) }
-        spinnerAdapter?.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerAdapter?.setDropDownViewResource(R.layout.spinner_dropdown_item)
 
         spinner = binding.spinner
         spinner.adapter = spinnerAdapter

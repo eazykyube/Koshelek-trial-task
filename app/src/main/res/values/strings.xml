@@ -8,6 +8,11 @@
     <string name="price">Price</string>
     <string name="total">Total</string>
     <string name="amount">Amount</string>
+    <string name="bid_price">Bid price</string>
+    <string name="bid_diff">Bid diff</string>
+    <string name="ask_price">Ask price</string>
+    <string name="ask_diff">Ask diff</string>
+    <string name="select_type">Select type:</string>
     <string-array name="currencies">
         <item>BTCUSDT</item>
         <item>BNBBTC</item>
